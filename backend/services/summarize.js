@@ -1,24 +1,36 @@
-// backend/services/summarize.js
-
 const axios = require('axios');
 
-// Dummy summarizeText function (replace with real AI/LLM if needed)
 async function summarizeText(transcription) {
-  if (!transcription) {
-    throw new Error('No transcription provided for summarization.');
+  try {
+    const prompt = `Summarize the following podcast transcript into 3 key points and a brief paragraph:\n\n${transcription}`;
+
+    const response = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        model: 'openai/gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    const summaryText = response.data.choices[0].message.content;
+
+    return {
+      text: summaryText,
+      keyPoints: summaryText.split('\n').filter(l => l.startsWith('1.') || l.startsWith('2.') || l.startsWith('3.'))
+    };
+  } catch (error) {
+    console.error('Error:', error.message);
+    return {
+      text: transcription.slice(0, 500) + '...',
+      keyPoints: ['Fallback: Error during OpenRouter summarization']
+    };
   }
-
-  // Example simple logic
-  const summary = {
-    text: transcription.slice(0, 500) + '...',  // Just trimming for now
-    keyPoints: [
-      'Point 1:  Dont dwell on saying I can not do it. Instead, ask How can I do it? This shift opens up creative ways to overcome challenges.',
-      'Point 2: Believe in yourself, explore alternative paths, and focus on how you can overcome challenges instead of saying "I can not',
-      'Point 3: Final major takeaway'
-    ]
-  };
-
-  return summary;
 }
 
 module.exports = { summarizeText };

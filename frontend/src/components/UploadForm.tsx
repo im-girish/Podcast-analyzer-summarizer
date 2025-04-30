@@ -41,7 +41,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ onAnalyze }) => {
           console.log('data from aws', data);
           setTranscription(data.transcription);
           setPdfUrl(data.pdfUrl);
-          setAudio(data.originalAudioUrl.url);
+          setAudio(data.audioSummaryUrl.url);
           setKeyPoints(data.summary.keyPoints);
         } catch (err) {
           console.error('error', err);
