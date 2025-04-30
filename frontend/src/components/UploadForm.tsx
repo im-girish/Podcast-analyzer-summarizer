@@ -78,8 +78,8 @@ const UploadForm: React.FC<UploadFormProps> = ({ onAnalyze }) => {
   };
 
   return (
-    <div className="p-8 bg-white rounded-2xl shadow-2xl mt-10  mx-auto">
-      <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">Podcast Analyzer App</h1>
+    <div className="p-8 bg-white rounded-2xl shadow-10xl mt-10  mx-auto">
+      <h1 className="text-4xl font-bold text-center text-blue-800 mb-8">Podcast Analyzer App</h1>
 
       {/* Tabs */}
      
