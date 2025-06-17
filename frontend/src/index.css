@@ -1,9 +1,55 @@
 @import "tailwindcss";
 
-.loader {
-  border-top-color: #3490dc;
-  animation: spin 1s ease-in-out infinite;
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
 }
+
+body {
+  @apply bg-gradient-to-br from-purple-100 to-blue-100 min-h-screen font-sans text-gray-800;
+}
+
+header {
+  background: var(--primary-gradient);
+  @apply shadow-xl backdrop-blur-md rounded-b-3xl;
+}
+
+footer {
+  @apply bg-transparent text-center py-4 text-gray-600 text-sm;
+}
+
+button {
+  @apply transition-transform transform hover:scale-105 hover:shadow-lg;
+}
+
+input, textarea {
+  @apply border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-inner;
+}
+
+.loader {
+  border-top-color: #7f5af0; /* a modern purple */
+  @apply border-8 border-gray-300 rounded-full w-24 h-24 mx-auto animate-spin;
+}
+
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Glassmorphism for cards/containers */
+.glass-card {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  @apply shadow-2xl rounded-2xl p-6 border border-white/30;
+}
+
+/* Animation for fade-in */
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

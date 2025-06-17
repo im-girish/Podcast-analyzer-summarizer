@@ -18,7 +18,7 @@ const App: React.FC = () => {
       // Dummy delay to simulate backend call
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Simulated response (replace with your backend API call)
+      // Simulated response (replace with actual backend API call)
       // const dummySummary: SummaryData = {
       //   text: 'This is a short summary of the podcast. Key points are discussed below.',
       //   keyPoints: [
@@ -26,9 +26,8 @@ const App: React.FC = () => {
       //     { title: 'Main Discussion', content: 'Important points discussed about the topic.' },
       //     { title: 'Conclusion', content: 'Podcast concludes with key takeaways.' },
       //   ],
-      //   audioSummaryUrl: '', // Can be empty if no audio generated
+      //   audioSummaryUrl: '', 
       // };
-
       // setSummary(dummySummary);
       setJobId('123456');
     } catch (error) {
@@ -40,14 +39,23 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-blue-100">
       <Header />
 
-      <main className="flex-1 container mx-auto px-4">
-        <UploadForm onAnalyze={handleAnalyze} />
+      <main className="flex-1 container mx-auto px-4 py-8 fade-in">
+        {/* Glass Card applied */}
+        <div className="glass-card max-w-4xl mx-auto">
+          <UploadForm onAnalyze={handleAnalyze} />
+        </div>
 
-        {/* {loading && <Progress />} */}
+        {/* Show Progress loader when loading */}
+        {loading && (
+          <div className="mt-10">
+            <Progress />
+          </div>
+        )}
 
+        {/* Placeholder for summary display in the future */}
         {/* {!loading && summary && <Results summary={summary} jobId={jobId} />} */}
       </main>
 

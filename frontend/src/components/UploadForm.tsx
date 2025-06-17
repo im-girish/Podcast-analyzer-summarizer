@@ -15,7 +15,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ onAnalyze }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [audio, setAudio] = useState<string>('');
   const [keypoints, setKeyPoints] = useState<string[]>([]);
-  const [analysis,setAnalysis] = useState<boolean>(false)
+  const [analysis, setAnalysis] = useState<boolean>(false);
 
   const handleAnalyze = async () => {
     if (activeTab === 'youtube') {
@@ -33,12 +33,9 @@ const UploadForm: React.FC<UploadFormProps> = ({ onAnalyze }) => {
             body: JSON.stringify({ url }),
           });
 
-          if (!res.ok) {
-            throw new Error('Failed to start analysis');
-          }
+          if (!res.ok) throw new Error('Failed to start analysis');
 
           const data = await res.json();
-          console.log('data from aws', data);
           setTranscription(data.transcription);
           setPdfUrl(data.pdfUrl);
           setAudio(data.audioSummaryUrl.url);
@@ -47,141 +44,113 @@ const UploadForm: React.FC<UploadFormProps> = ({ onAnalyze }) => {
           console.error('error', err);
         } finally {
           setLoading(false);
-          
         }
       } else {
         alert('Please enter a valid YouTube URL');
       }
-    } else if (activeTab === 'upload') {
-      if (file) {
-        onAnalyze({ file });
-      } else {
-        alert('Please upload a file');
-      }
+    } else if (file) {
+      onAnalyze({ file });
+    } else {
+      alert('Please upload a file');
     }
   };
 
-  const pdfDownload = () => {
-    if (pdfUrl.trim() === '') {
-      alert('PDF not found');
-    } else {
-      window.open(pdfUrl, '_blank');
-    }
-  };
-
-  const playAudio = () => {
-    if (audio.trim() !== '') {
-      window.open(audio, '_blank');
-    } else {
-      alert('Audio not available');
-    }
-  };
+  const pdfDownload = () => pdfUrl ? window.open(pdfUrl, '_blank') : alert('PDF not found');
+  const playAudio = () => audio ? window.open(audio, '_blank') : alert('Audio not available');
 
   return (
-    <div className="p-8 bg-white rounded-2xl shadow-10xl mt-10  mx-auto">
-      <h1 className="text-4xl font-bold text-center text-blue-800 mb-8">Podcast Analyzer App</h1>
+    <div className="p-8 bg-white bg-opacity-70 backdrop-blur-md rounded-3xl shadow-2xl mt-12 mx-auto max-w-5xl">
+      <h1 className="text-4xl font-extrabold text-center text-blue-700 mb-8 drop-shadow-md">Podcast Analyzer App</h1>
 
       {/* Tabs */}
-     
-
-      <div className='md:flex item-center justify-center gap-10 '>
-
-        
-         {/* Input Section */}
-      <div className="bg-gray-50 p-6 rounded-xl shadow-inner md:w-[200rem] mt-10">
-
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-8">
         <button
-          className={`px-6 py-2 rounded-full text-lg font-medium transition-all ${
-            activeTab === 'youtube' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+          className={`px-8 py-2 mx-2 rounded-full transition-all duration-300 ${
+            activeTab === 'youtube' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-200 hover:bg-gray-300'
           }`}
           onClick={() => setActiveTab('youtube')}
         >
           YouTube URL
         </button>
-        
       </div>
 
+      {/* Input Section */}
+      <div className="flex justify-center">
+        <div className="bg-gradient-to-br from-white via-gray-50 to-gray-200 p-6 rounded-2xl shadow-inner w-full md:w-3/4">
+          {activeTab === 'youtube' ? (
+            <div>
+              <label className="block mb-2 font-semibold text-gray-700">YouTube URL:</label>
+              <input
+                type="text"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                className="border w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+            </div>
+          ) : (
+            <div>
+              <label className="block mb-2 font-semibold text-gray-700">Upload Audio/Video:</label>
+              <input
+                type="file"
+                accept="audio/*,video/*"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                className="border w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
+              />
+            </div>
+          )}
 
-        {activeTab === 'youtube' ? (
-          <div>
-            <label className="block mb-2 font-semibold text-gray-700">YouTube URL:</label>
-            <input
-              type="text"
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-              className="border w-full p-3 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="https://www.youtube.com/watch?v=..."
-            />
-          </div>
-        ) : (
-          <div>
-            <label className="block mb-2 font-semibold text-gray-700">Upload Audio/Video File:</label>
-            <input
-              type="file"
-              accept="audio/*,video/*"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="border w-full p-3 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-        )}
-
-        <button
-          onClick={handleAnalyze}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-md transition-all"
-        >
-          Analyze
-        </button>
+          <button
+            onClick={handleAnalyze}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:scale-105 transform transition-all text-white font-bold py-3 rounded-xl mt-4 shadow-md"
+          >
+            Analyze Podcast
+          </button>
+        </div>
       </div>
 
       {/* Summary Section */}
-      {analysis ? <div className="mt-10 bg-gray-100 p-2 rounded-2xl shadow-inner">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Podcast Summary</h2>
-
-        {loading ? (
-          <Progress />
-        ) : (
-          transcription && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">Transcription</h3>
-                <p className="bg-white p-4 rounded-lg shadow-sm text-gray-800">{transcription}</p>
-              </div>
-
-              {/* Key Points */}
-              {keypoints.length > 0 && (
+      {analysis && (
+        <div className="mt-10 bg-gray-50 p-6 rounded-2xl shadow-lg">
+          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Podcast Summary</h2>
+          {loading ? <Progress /> : (
+            transcription && (
+              <div className="space-y-6">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2">Key Points</h3>
-                  <ul className="list-disc list-inside bg-white p-4 rounded-lg shadow-sm">
-                    {keypoints.map((point, index) => (
-                      <li key={index} className="text-gray-800">{point}</li>
-                    ))}
-                  </ul>
+                  <h3 className="text-xl font-semibold text-gray-700">Transcription:</h3>
+                  <p className="bg-white p-4 rounded-xl shadow-sm">{transcription}</p>
                 </div>
-              )}
 
-              {/* Buttons */}
-              <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
-                <button
-                  onClick={pdfDownload}
-                  className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-md transition-all"
-                >
-                  Download PDF
-                </button>
-                <button
-                  onClick={playAudio}
-                  className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-2 rounded-md transition-all"
-                >
-                  Play Audio
-                </button>
+                {keypoints.length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-700">Key Points:</h3>
+                    <ul className="list-disc list-inside bg-white p-4 rounded-xl shadow-sm">
+                      {keypoints.map((point, index) => (
+                        <li key={index} className="text-gray-800">{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
+                  <button
+                    onClick={pdfDownload}
+                    className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-xl transition-transform hover:scale-105"
+                  >
+                    Download PDF
+                  </button>
+                  <button
+                    onClick={playAudio}
+                    className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-2 rounded-xl transition-transform hover:scale-105"
+                  >
+                    Play Audio
+                  </button>
+                </div>
               </div>
-            </div>
-          )
-        )}
-      </div> :""}
-      </div>
-
-     
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 };
